@@ -4,7 +4,8 @@ const mongoose = require("mongoose")
 
 const post = new Schema({
 text:{
-    type:String
+    type:String,
+    required:true
 },
 name:{
     type:String,

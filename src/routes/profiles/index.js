@@ -3,8 +3,9 @@ const path = require('path')
 const fs = require('fs-extra')
 const multer = require('multer')
 const q2m = require('query-to-mongo')
-
+const {join} = require("path")
 const ProfileModel = require("./schema")
+const json2csv = require("json2csv")
 const profileRouter = express.Router()
 const upload = multer()
 const port = process.env.PORT
@@ -84,18 +85,17 @@ profileRouter.post('/:username/picture', upload.single('user'), async(req, res, 
 
 profileRouter.get('/:username/cv', async(req, res, next)=>{
     try {
-        const source = fs.createReadStream(
-            path.join(imagePath, `${req.params.username}`)
-        )
-        res.setHeader(
-            "Content-Disposition",
-            `attachment; filename=${req.params.username}`
-        ) 
-        source.pipe(res)
+     
+     const profile = await ProfileModel.findOne( {'username':req.params.username})     
+        
+          const  fields = ["_id","name","surname","email","bio","title",
+           "area","image","username","createdAt","updatedAt"]
+     
+         const data = {fields}
+const csv = json2csv.parse(profile,data)
 
-        source.on("error", (error) => {
-            next(error)
-        })
+res.setHeader("Content-Disposition", "attachment; filename=profile.csv")
+    res.send(csv)    
     } catch (error) {
         next(error)
     }
