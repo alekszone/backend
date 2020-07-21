@@ -9,6 +9,7 @@ const json2csv = require("json2csv")
 const profileRouter = express.Router()
 const upload = multer()
 const port = process.env.PORT
+const PdfPrinter = require('pdfmake')
 const imagePath = path.join(__dirname, "../../../public/image/profile")
 
 profileRouter.get('/', async(req, res, next)=>{
@@ -84,21 +85,48 @@ profileRouter.post('/:username/picture', upload.single('user'), async(req, res, 
 })
 
 profileRouter.get('/:username/cv', async(req, res, next)=>{
-    try {
-     
-     const profile = await ProfileModel.findOne( {'username':req.params.username})     
-        
-          const  fields = ["_id","name","surname","email","bio","title",
-           "area","image","username","createdAt","updatedAt"]
-     
-         const data = {fields}
-const csv = json2csv.parse(profile,data)
+    
+  try {
+      const user = await ProfileModel.findOne({'username': req.params.username})
+      if(user){
+          var fonts = {
+              Roboto: {
+                  normal: 'node_modules/roboto-font/fonts/Roboto/roboto-regular-webfont.ttf',
+                  bold: 'node_modules/roboto-font/fonts/Roboto/roboto-bold-webfont.ttf',
+                  italics: 'node_modules/roboto-font/fonts/Roboto/roboto-italic-webfont.ttf',
+                  bolditalics: 'node_modules/roboto-font/fonts/Roboto/roboto-bolditalic-webfont.ttf'
+              }
+          };
+          var printer = new PdfPrinter(fonts);
+          var docDefinition = {
+              pageMargins: [150, 50, 150, 50],
+              content: [
+                  { text: `${user.username}`, fontSize: 25, background: 'yellow', italics: true },
+                  {
+                      image: `${path.join(imagePath, `${user.username}.jpg`)}`,
+                      width: 150
+                  },
+                  "                                                                         ",
+                  `             Name: ${user.name}`,
+                  `             Surname: ${user.surname}`,
+                  `             Email: ${user.email}`,
+                  `             Bio: ${user.bio} $`,
+                  `             Title: ${user.title}`,
+                  `             Area: ${user.area}`,
+              ]
+          }
 
-res.setHeader("Content-Disposition", "attachment; filename=profile.csv")
-    res.send(csv)    
-    } catch (error) {
-        next(error)
-    }
+          var pdfDoc = printer.createPdfKitDocument(docDefinition);
+          res.setHeader("Content-Disposition", `attachment; filename=${user.name}.pdf`)
+          res.contentType("application/pdf")
+          pdfDoc.pipe(res)
+          pdfDoc.end()
+      }
+      else res.status(404).send('not found!')
+  
+  } catch (error) {
+    next(error)
+  }
 })
 
 module.exports = profileRouter
