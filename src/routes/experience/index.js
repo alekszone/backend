@@ -89,4 +89,8 @@ experienceRouter.post("/:id/image", upload.single('image'), async (req, res, nex
     }
 })
 
+
+
+
+
 module.exports = experienceRouter

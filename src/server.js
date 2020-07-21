@@ -1,5 +1,4 @@
 const express = require("express")
-
 const cors = require("cors")
 const { join } = require("path")
 const listEndpoints = require("express-list-endpoints")
