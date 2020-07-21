@@ -29,18 +29,12 @@ server.use("/post", post)
 server.use("/profiles", profileRouter)
 server.use("/experiences", experienceRouter)
 
-
-
-
 server.use(notFoundHandler)
 server.use(badRequestHandler)
 server.use(newlyDefinedErrorHandler)
 server.use(otherGenericErrorHandler)
 
 console.log(listEndpoints(server))
-
-
-
 mongoose.connect("mongodb+srv://eriseld:troy1894@cluster0.j7g0j.mongodb.net/linkedindb", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
