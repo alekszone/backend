@@ -103,7 +103,7 @@ profileRouter.get('/:username/cv', async(req, res, next)=>{
               content: [
                   { text: `${user.username}`, fontSize: 25, background: 'yellow', italics: true },
                   {
-                      image: `${path.join(imagePath, `${user.username}.jpg`)}`,
+                      image: `${path.join(imagePath, `${req.params.username}.jpg`)}`,
                       width: 150
                   },
                   "                                                                         ",
