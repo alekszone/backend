@@ -9,7 +9,6 @@ const json2csv = require("json2csv")
 const profileRouter = express.Router()
 const upload = multer()
 const port = process.env.PORT
-const url = process.env.HEROKU_URL
 const imagePath = path.join(__dirname, "../../../public/image/profile")
 
 profileRouter.get('/', async(req, res, next)=>{
@@ -69,7 +68,7 @@ profileRouter.post('/:username/picture', upload.single('user'), async(req, res, 
     await fs.writeFile(path.join(imagePath, `${req.params.username}.jpg`), req.file.buffer)
     
     req.body = {
-      image: `${url}:${port}/image/profile/${req.params.username}.jpg`
+      image: `https://linkedin-team.herokuapp.com:${port}/image/profile/${req.params.username}.jpg`
     }
     const user = await ProfileModel.findOneAndUpdate({'username': req.params.username}, req.body)
     if (user) {
