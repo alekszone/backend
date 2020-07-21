@@ -6,7 +6,7 @@ const listEndpoints = require("express-list-endpoints")
 const mongoose = require("mongoose")
 const staticFolderPath = join(__dirname, "../public")
 const profileRouter = require('./routes/profiles')
-
+const port = process.env.PORT
 const experienceRouter = require("./routes/experience")
 const post = require("./routes/post")
 const server = express()
@@ -47,8 +47,8 @@ mongoose.connect("mongodb+srv://eriseld:troy1894@cluster0.j7g0j.mongodb.net/link
     useUnifiedTopology: true,
 })
     .then(
-        server.listen( 3009, () => {
-            console.log("Running on port",  3009)
+        server.listen( port || 3009, () => {
+            console.log("Running on port", port || 3009)
         })
     )
     .catch((err) => console.log(err))
