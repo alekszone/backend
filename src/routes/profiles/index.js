@@ -9,6 +9,7 @@ const json2csv = require("json2csv")
 const profileRouter = express.Router()
 const upload = multer()
 const port = process.env.PORT
+const experienceSchema = require("../experience/experienceSchema")
 const PdfPrinter = require('pdfmake')
 const imagePath = path.join(__dirname, "../../../public/image/profile")
 
@@ -46,6 +47,18 @@ profileRouter.post('/', async(req, res, next)=>{
     } catch (error) {
         next(error)
     }
+})
+
+//profile experiences
+profileRouter.post("/:username/experiences", async (req, res, next) => {
+  try {
+      const newExperience = new experienceSchema(req.body)
+      const { _id } = await newExperience.save()
+
+      res.status(201).send(_id)
+  } catch (error) {
+      next(error)
+  }
 })
 
 profileRouter.put('/:username', async(req, res, next)=>{
