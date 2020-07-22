@@ -63,7 +63,23 @@ profileRouter.put('/:username', async(req, res, next)=>{
       }
 })
 
-profileRouter.post('/:username/picture', upload.single('user'), async(req, res, next)=>{
+
+profileRouter.delete('/:username', async(req, res, next)=>{
+  try {
+      const user = await ProfileModel.findOneAndDelete({'username': req.params.username})
+      if (user) {
+        res.send(`Username: ${req.params.username} was deleted successfully`)
+      } else {
+        const error = new Error(`User with username ${req.params.username} not found`)
+        error.httpStatusCode = 404
+        next(error)
+      }
+    } catch (error) {
+      next(error)
+    }
+})
+
+profileRouter.post('/:username/picture', upload.single('userImage'), async(req, res, next)=>{
     
   try {
     await fs.writeFile(path.join(imagePath, `${req.params.username}.jpg`), req.file.buffer)

@@ -9,7 +9,7 @@ const imagePath = path.join(__dirname, "../../../public/image/experiences")
 const experienceRouter = express.Router()
 
 //get all experiences
-experienceRouter.get("/", async (req, res, next) => {
+experienceRouter.get("/:username/experiences", async (req, res, next) => {
     try {
         const query = q2m(req.query)
         const experience = await experienceSchema.find(query.criteria, query.options.fields)
@@ -23,10 +23,10 @@ experienceRouter.get("/", async (req, res, next) => {
     }
 })
 
-//get the single experience id
-experienceRouter.get("/:id", async (req, res, next) => {
+//get the single experience username
+experienceRouter.get("/:expId", async (req, res, next) => {
     try {
-        const id = req.params.id
+        const id = req.params.expId
         const experience = await experienceSchema.findById(id)
         console.log(experience)
         res.send(experience)
@@ -34,8 +34,8 @@ experienceRouter.get("/:id", async (req, res, next) => {
         next(error)
     }
 })
-//post a new experience with the experience id.
-experienceRouter.post("/", async (req, res, next) => {
+//post a new experience with the experience username.
+experienceRouter.post("/:username/experiences", async (req, res, next) => {
     try {
         const newExperience = new experienceSchema(req.body)
         const { _id } = await newExperience.save()
@@ -46,39 +46,41 @@ experienceRouter.post("/", async (req, res, next) => {
     }
 })
 
-//edit a new experience using the experience id.
-experienceRouter.put("/:id", async (req, res, next) => {
+//edit a new experience using the experience username.
+experienceRouter.put("/:expId", async (req, res, next) => {
     try {
-        const experience = await experienceSchema.findByIdAndUpdate(req.params.id, req.body)
+        const id = req.params.expId
+        const experience = await experienceSchema.findByIdAndUpdate(id, req.body)
         if (experience) {
             res.send(req.body)
         } else {
-            const error = new Error(`experience with id ${req.params.id} dont exist`)
+            const error = new Error(`experience with username: ${req.params.username} dont exist`)
             console.log(error)
         }
     } catch (error) {
         next(error)
     }
 })
-//Delete a new experience using the student id.
-experienceRouter.delete("/:id", async (req, res, next) => {
+//Delete a new experience using the student username.
+experienceRouter.delete("/:username", async (req, res, next) => {
     try {
-        const experience = await experienceSchema.findByIdAndDelete(req.params.id)
+        const experience = await experienceSchema.findOneAndDelete({"username": req.params.username})
         if (experience) {
-            res.send(`experience with id: ${req.params.id} was deleted successfully`)
+            res.send(`experience with username: ${req.params.username} was deleted successfully`)
         } else {
-            console.log(`experience with id: ${req.params.id} not found in Database`)
+            console.log(`experience with username: ${req.params.username} not found in Database`)
         }
     } catch (error) {
         next(error)
     }
 })
 //upload a new image using the.console
-experienceRouter.post("/:id/image", upload.single('image'), async (req, res, next) => {
+experienceRouter.post("/:expId/picture", upload.single('image'), async (req, res, next) => {
     try {
-        await fs.writeFile(path.join(imagePath, `${req.params.id}.jpg`), req.file.buffer)
-        req.body = { image: `${req.params.id}.jpg` }
-        const image = await experienceSchema.findByIdAndUpdate(req.params.id, req.body)
+        const id = req.params.expId
+        await fs.writeFile(path.join(imagePath, `${id}.jpg`), req.file.buffer)
+        req.body = { image: `${id}.jpg` }
+        const image = await experienceSchema.findByIdAndUpdate(id, req.body)
         if (image) {
             res.send("Image Added")
         } else {
@@ -89,7 +91,7 @@ experienceRouter.post("/:id/image", upload.single('image'), async (req, res, nex
     }
 })
 
-experienceRouter.get('/:username/cv', async(req, res, next)=>{
+experienceRouter.get('/csv', async(req, res, next)=>{
     try {
      
      const profile = await ProfileModel.findOne( {'username':req.params.username})     
