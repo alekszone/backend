@@ -202,10 +202,10 @@ profileRouter.delete('/:username', async (req, res, next) => {
 profileRouter.post('/:username/picture', upload.single('userImage'), async (req, res, next) => {
 
   try {
-    await fs.writeFile(path.join(imagePath, `${req.params.username}.jpg`), req.file.buffer)
+    await fs.writeFile(path.join(imagePath, `${req.params.username}.png`), req.file.buffer)
 
     req.body = {
-      image: `https://linkedin-team.herokuapp.com/public/image/profile/${req.params.username}`
+      image: `https://linkedin-team.herokuapp.com/public/image/profile/${req.params.username}.png`
     }
     const user = await ProfileModel.findOneAndUpdate({ 'username': req.params.username }, req.body)
     if (user) {
