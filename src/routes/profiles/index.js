@@ -205,7 +205,7 @@ profileRouter.post('/:username/picture', upload.single('userImage'), async (req,
     await fs.writeFile(path.join(imagePath, `${req.params.username}.jpg`), req.file.buffer)
 
     req.body = {
-      image: `https://linkedin-team.herokuapp.com/image/profile/${req.params.username}`
+      image: `https://linkedin-team.herokuapp.com/public/image/profile/${req.params.username}`
     }
     const user = await ProfileModel.findOneAndUpdate({ 'username': req.params.username }, req.body)
     if (user) {
