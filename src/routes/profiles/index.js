@@ -9,7 +9,7 @@ const json2csv = require("json2csv")
 const profileRouter = express.Router()
 const upload = multer()
 const port = process.env.PORT
-const experienceSchema = require("../experience/experienceSchema")
+const experienceModel = require("./experienceSchema")
 const PdfPrinter = require('pdfmake')
 const imagePath = path.join(__dirname, "../../../public/image/profile")
 
@@ -49,10 +49,37 @@ profileRouter.post('/', async(req, res, next)=>{
     }
 })
 
+//get all experiences
+profileRouter.get("/:username/experiences", async (req, res, next) => {
+  try {
+      const query = q2m(req.query)
+      const experience = await experienceModel.find(query.criteria, query.options.fields)
+          .skip(query.options.skip)
+          .limit(query.options.limit)
+          .sort(query.options.sort)
+
+      res.send(experience)
+  } catch (error) {
+      next(error)
+  }
+})
+
+//get the single experience username
+profileRouter.get("/:username/experiences/:expId", async (req, res, next) => {
+  try {
+      const id = req.params.expId
+      const experience = await experienceModel.findById(id)
+      console.log(experience)
+      res.send(experience)
+  } catch (error) {
+      next(error)
+  }
+})
+
 //profile experiences
 profileRouter.post("/:username/experiences", async (req, res, next) => {
   try {
-      const newExperience = new experienceSchema(req.body)
+      const newExperience = new experienceModel(req.body)
       const { _id } = await newExperience.save()
 
       res.status(201).send(_id)
@@ -60,6 +87,73 @@ profileRouter.post("/:username/experiences", async (req, res, next) => {
       next(error)
   }
 })
+
+//edit a new experience using the experience username.
+profileRouter.put("/:username/experiences/:expId", async (req, res, next) => {
+    try {
+        const id = req.params.expId
+        const experience = await experienceModel.findByIdAndUpdate(id, req.body)
+        if (experience) {
+            res.send(req.body)
+        } else {
+            const error = new Error(`experience with username: ${req.params.username} dont exist`)
+            console.log(error)
+        }
+    } catch (error) {
+        next(error)
+    }
+})
+
+//Delete a new experience using the student username.
+profileRouter.delete("/:username/experiences/:expId", async (req, res, next) => {
+    try {
+        const id = req.params.expId
+        const experience = await experienceModel.findByIdAndDelete(id)
+        if (experience) {
+            res.send(`experience with username: ${req.params.username} was deleted successfully`)
+        } else {
+            console.log(`experience with username: ${req.params.username} not found in Database`)
+        }
+    } catch (error) {
+        next(error)
+    }
+})
+
+
+//upload a new image using the.console
+profileRouter.post("/:username/experiences/:expId/picture", upload.single('image'), async (req, res, next) => {
+    try {
+        const id = req.params.expId
+        await fs.writeFile(path.join(imagePath, `${id}.jpg`), req.file.buffer)
+        req.body = { image: `${id}.jpg` }
+        const image = await experienceModel.findByIdAndUpdate(id, req.body)
+        if (image) {
+            res.send("Image Added")
+        } else {
+            res.send("Not exist")
+        }
+    } catch (error) {
+        next(error)
+    }
+})
+
+profileRouter.get('/:username/experiences/csv', async(req, res, next)=>{
+    try {
+     
+     const profile = await ProfileModel.findOne( {'username':req.params.username})     
+        
+          const  fields = ["_id","role","company","startDate","endDate","description",
+           "area","username"]
+     
+         const data = {fields}
+const csv = json2csv.parse(profile,data)
+res.setHeader("Content-Disposition", "attachment; filename=profile.csv")
+    res.send(csv)    
+    } catch (error) {
+        next(error)
+    }
+})
+
 
 profileRouter.put('/:username', async(req, res, next)=>{
     try {

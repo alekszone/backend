@@ -6,7 +6,7 @@ const mongoose = require("mongoose")
 const staticFolderPath = join(__dirname, "../public")
 const profileRouter = require('./routes/profiles')
 const port = process.env.PORT
-const experienceRouter = require("./routes/experience")
+// const experienceRouter = require("./routes/experience")
 const post = require("./routes/post")
 const server = express()
 
@@ -27,7 +27,7 @@ server.use(cors())
 
 server.use("/post", post)
 server.use("/profiles", profileRouter)
-server.use("/experiences", experienceRouter)
+// server.use("/experiences", experienceRouter)
 
 server.use(notFoundHandler)
 server.use(badRequestHandler)

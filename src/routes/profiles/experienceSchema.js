@@ -1,4 +1,4 @@
-const { Schema } = require("mongoose")
+const { Schema, model } = require("mongoose")
 const mongoose = require("mongoose")
 
 const experienceSchema = new Schema(
@@ -42,4 +42,6 @@ const experienceSchema = new Schema(
     }
 
 )
-module.exports = mongoose.model("Experiences", experienceSchema)
+
+const experienceModel = model("Experience", experienceSchema)
+module.exports = experienceModel
