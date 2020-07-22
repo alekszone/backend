@@ -89,6 +89,22 @@ experienceRouter.post("/:id/image", upload.single('image'), async (req, res, nex
     }
 })
 
+experienceRouter.get('/:username/cv', async(req, res, next)=>{
+    try {
+     
+     const profile = await ProfileModel.findOne( {'username':req.params.username})     
+        
+          const  fields = ["_id","name","surname","email","bio","title",
+           "area","image","username","createdAt","updatedAt"]
+     
+         const data = {fields}
+const csv = json2csv.parse(profile,data)
+res.setHeader("Content-Disposition", "attachment; filename=profile.csv")
+    res.send(csv)    
+    } catch (error) {
+        next(error)
+    }
+})
 
 
 
