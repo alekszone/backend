@@ -143,7 +143,7 @@ profileRouter.get('/:username/experiences/csv', async(req, res, next)=>{
      
      const experience = await experienceModel.findOne( {'username':req.params.username})     
         
-          const  fields = ["_id","role","company","startDate","endDate","description",
+          const  fields = ["role","company","startDate","endDate","description",
            "area","username"]
      
          const data = {fields}
