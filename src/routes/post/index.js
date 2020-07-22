@@ -6,7 +6,7 @@ const multer = require("multer")
 const upload = multer()
 const q2m  = require("query-to-mongo")
 const post = express.Router()
-const imagePath = path.join(__dirname,"../../../post/image")
+const imagePath = path.join(__dirname,"../../../public/image/post")
 
 
 post.get("/", async(req,res,next)=>{
