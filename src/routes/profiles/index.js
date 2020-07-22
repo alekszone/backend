@@ -53,13 +53,21 @@ profileRouter.post('/', async(req, res, next)=>{
 //get all experiences
 profileRouter.get("/:username/experiences", async (req, res, next) => {
   try {
-      const query = q2m(req.query)
-      const experience = await experienceModel.find(query.criteria, query.options.fields)
-          .skip(query.options.skip)
-          .limit(query.options.limit)
-          .sort(query.options.sort)
+      // const query = q2m(req.query)
+      // const experience = await experienceModel.find(query.criteria, query.options.fields)
+      //     .skip(query.options.skip)
+      //     .limit(query.options.limit)
+      //     .sort(query.options.sort)
+      //     res.send(experience)
 
-      res.send(experience)
+      const exp = await experienceModel.find({"username": req.params.username})
+      if(exp){
+        res.send(exp)
+      }
+      else{
+        res.status(404).send("not found!")
+      }
+
   } catch (error) {
       next(error)
   }
@@ -193,7 +201,7 @@ profileRouter.post('/:username/picture', upload.single('userImage'), async(req, 
     await fs.writeFile(path.join(imagePath, `${req.params.username}.jpg`), req.file.buffer)
     
     req.body = {
-      image: `${imagePath}/${req.params.username}.jpg`
+      image: `https://linkedin-team.herokuapp.com/image/profile/${req.params.username}.jpg`
     }
     const user = await ProfileModel.findOneAndUpdate({'username': req.params.username}, req.body)
     if (user) {
