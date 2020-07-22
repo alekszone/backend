@@ -12,6 +12,7 @@ const port = process.env.PORT
 const experienceModel = require("./experienceSchema")
 const PdfPrinter = require('pdfmake')
 const imagePath = path.join(__dirname, "../../../public/image/profile")
+const imagePathExp = path.join(__dirname, "../../../public/image/experiences")
 
 profileRouter.get('/', async(req, res, next)=>{
     try {
@@ -124,7 +125,7 @@ profileRouter.delete("/:username/experiences/:expId", async (req, res, next) => 
 profileRouter.post("/:username/experiences/:expId/picture", upload.single('image'), async (req, res, next) => {
     try {
         const id = req.params.expId
-        await fs.writeFile(path.join(imagePath, `${id}.jpg`), req.file.buffer)
+        await fs.writeFile(path.join(imagePathExp, `${id}.jpg`), req.file.buffer)
         req.body = { image: `${id}.jpg` }
         const image = await experienceModel.findByIdAndUpdate(id, req.body)
         if (image) {
