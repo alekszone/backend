@@ -14,6 +14,8 @@ const PdfPrinter = require('pdfmake')
 const imagePath = path.join(__dirname, "../../../public/image/profile")
 const imagePathExp = path.join(__dirname, "../../../public/image/experiences")
 
+
+
 profileRouter.get('/', async (req, res, next) => {
   try {
     const query = q2m(req.query)
@@ -53,12 +55,14 @@ profileRouter.post('/', async (req, res, next) => {
 //get all experiences
 profileRouter.get("/:username/experiences", async (req, res, next) => {
   try {
+    //in case we need them :P
+
     // const query = q2m(req.query)
     // const experience = await experienceModel.find(query.criteria, query.options.fields)
-    //     .skip(query.options.skip)
-    //     .limit(query.options.limit)
-    //     .sort(query.options.sort)
-    //     res.send(experience)
+    //   .skip(query.options.skip)
+    //   .limit(query.options.limit)
+    //   .sort(query.options.sort)
+    // res.send(experience)
 
     const exp = await experienceModel.find({ "username": req.params.username })
     if (exp) {
@@ -67,6 +71,25 @@ profileRouter.get("/:username/experiences", async (req, res, next) => {
     else {
       res.status(404).send("not found!")
     }
+
+  } catch (error) {
+    next(error)
+  }
+})
+
+profileRouter.get('/:username/experiences/csv', async (req, res, next) => {
+  try {
+
+    //  const experience = await experienceModel.find({ "username": req.params.username })
+    const experience = await experienceModel.find({ "username": req.params.username })
+    console.log(experience)
+    const fields = ["role", "company", "startDate", "endDate", "description",
+      "area", "username", "image"]
+
+    const data = { fields }
+    const csv = json2csv.parse(experience, data)
+    res.setHeader("Content-Disposition", "attachment; filename=experiences.csv")
+    res.send(csv)
 
   } catch (error) {
     next(error)
@@ -128,7 +151,6 @@ profileRouter.delete("/:username/experiences/:expId", async (req, res, next) => 
   }
 })
 
-
 //upload a new image using the.console
 profileRouter.post("/:username/experiences/:expId/picture", upload.single('image'), async (req, res, next) => {
   try {
@@ -145,50 +167,6 @@ profileRouter.post("/:username/experiences/:expId/picture", upload.single('image
     next(error)
   }
 })
-
-profileRouter.get('/:username/experiences/csv', async (req, res, next) => {
-  try {
-
-    const experience = await experienceModel.find({ "username": req.params.username })
-    console.log(experience)
-    const fields = ["role", "company", "startDate", "endDate", "description",
-      "area", "username", "image"]
-
-    const data = { fields }
-    const csv = json2csv.parse(experience, data)
-    res.setHeader("Content-Disposition", "attachment; filename=experiences.csv")
-    res.send(csv)
-  } catch (error) {
-    next(error)
-  }
-
-  // ///////////////////////////////
-  // ter.get("/:username/experiences/CSV", async (req, res, next) => {
-  //   const fields = [
-  //     "role",
-  //     "company",
-  //     "startDate",
-  //     "endDate",
-  //     "description",
-  //     "area",
-  //     "username",
-  //     "image",
-  //   ];
-  //   const opts = { fields };
-  //   try {
-  //     const experiences = await ExperienceModel.find();
-  //     const csv = json2csv.parse(experiences, opts);
-  //     res.setHeader(
-  //       "Content-Disposition",
-  //       "attachment; filename=experiences.csv"
-  //     );
-  //     res.send(csv);
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // });
-})
-
 
 profileRouter.put('/:username', async (req, res, next) => {
   try {
