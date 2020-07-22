@@ -149,10 +149,10 @@ profileRouter.post("/:username/experiences/:expId/picture", upload.single('image
 profileRouter.get('/:username/experiences/csv', async(req, res, next)=>{
     try {
      
-     const experience = await experienceModel.find({'username':req.params.username})     
+     const experience = await experienceModel.find()     
         
           const  fields = ["role","company","startDate","endDate","description",
-           "area","username"]
+           "area","username", "image"]
      
          const data = {fields}
 const csv = json2csv.parse(experience,data)
@@ -161,6 +161,32 @@ res.setHeader("Content-Disposition", "attachment; filename=experiences.csv")
     } catch (error) {
         next(error)
     }
+
+    // ///////////////////////////////
+    // ter.get("/:username/experiences/CSV", async (req, res, next) => {
+    //   const fields = [
+    //     "role",
+    //     "company",
+    //     "startDate",
+    //     "endDate",
+    //     "description",
+    //     "area",
+    //     "username",
+    //     "image",
+    //   ];
+    //   const opts = { fields };
+    //   try {
+    //     const experiences = await ExperienceModel.find();
+    //     const csv = json2csv.parse(experiences, opts);
+    //     res.setHeader(
+    //       "Content-Disposition",
+    //       "attachment; filename=experiences.csv"
+    //     );
+    //     res.send(csv);
+    //   } catch (error) {
+    //     next(error);
+    //   }
+    // });
 })
 
 
