@@ -149,7 +149,7 @@ profileRouter.post("/:username/experiences/:expId/picture", upload.single('image
 profileRouter.get('/:username/experiences/csv', async(req, res, next)=>{
     try {
      
-     const experience = await experienceModel.find()     
+     const experience = await experienceModel.find({"username": req.params.username})     
         
           const  fields = ["role","company","startDate","endDate","description",
            "area","username", "image"]
