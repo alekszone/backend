@@ -13,6 +13,19 @@ const experienceModel = require("./experienceSchema")
 const PdfPrinter = require('pdfmake')
 const imagePath = path.join(__dirname, "../../../public/image/profile")
 const imagePathExp = path.join(__dirname, "../../../public/image/experiences")
+const postSchema = require("../posts/postSchema")
+
+
+//get all posts with the same person id
+profileRouter.get("/:userId/posts", async (req, res, next) => {
+  try {
+
+    const posts = await postSchema.find({ 'user': req.params.userId })
+    res.send(posts)
+  } catch (err) {
+    next(err)
+  }
+})
 
 
 
