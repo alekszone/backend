@@ -156,7 +156,7 @@ profileRouter.post("/:username/experiences/:expId/picture", upload.single('image
   try {
     const id = req.params.expId
     await fs.writeFile(path.join(imagePathExp, `${id}.jpg`), req.file.buffer)
-    req.body = { image: `${id}.jpg` }
+    req.body = { image: `https://linkedin-team.herokuapp.com/image/experiences/${id}.jpg` }
     const image = await experienceModel.findByIdAndUpdate(id, req.body)
     if (image) {
       res.send("Image Added")
