@@ -68,7 +68,7 @@ posts.post("/:postId/image" , upload.single('image'),async(req,res,next)=>{
     try{
     await fs.writeFile(path.join(imagePath, `${req.params.postId}.jpg`),req.file.buffer)
     
-    req.body={ image : `https://linkedin-team.herokuapp.com/public/image/post/${req.params.postId}.jpg`}
+    req.body={ image : `https://linkedin-team.herokuapp.com/image/post/${req.params.postId}.jpg`}
     console.log(req.body)
     const image = await mongo.findByIdAndUpdate({'_id':req.params.postId}, req.body)
     console.log(image)
