@@ -7,10 +7,6 @@ text:{
     type:String,
     required:true
 },
-name:{
-    type:String,
-    required: true    
-},
 username : {
     type:String,
     required:true
@@ -19,8 +15,7 @@ user:[{
   type:Schema.Types.ObjectId , ref:"profiles"
 }],
 image:{
-    type:String,
-    
+    type:String,    
 },
  },
 {
