@@ -26,7 +26,9 @@
     "mongoose": "^5.9.25",
     "multer": "^1.4.2",
     "path": "^0.12.7",
+    "pdfmake": "^0.1.66",
     "query-to-mongo": "^0.10.1",
+    "roboto-font": "^0.1.0",
     "uniqid": "^5.2.0",
     "validator": "^13.1.1"
   }

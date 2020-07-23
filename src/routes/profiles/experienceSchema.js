@@ -1,4 +1,4 @@
-const { Schema } = require("mongoose")
+const { Schema, model } = require("mongoose")
 const mongoose = require("mongoose")
 
 const experienceSchema = new Schema(
@@ -12,19 +12,28 @@ const experienceSchema = new Schema(
             type: String,
             required: true
         },
-        startDate: String,
+        startDate: {
+            type: Date
+        },
         endDate: {
-            type: String,
-            required: true
+            type: Date
         },
         description: {
             type: String,
             required: true
         },
-        area: String,
-        username: String,
+        area: {
+            type: String,
+            required: true
+        },
+        username: {
+            type: String,
+            required: true
+        },
 
-        image: String,
+        image: {
+            type: String
+        },
 
 
     },
@@ -33,4 +42,6 @@ const experienceSchema = new Schema(
     }
 
 )
-module.exports = mongoose.model("Experiences", experienceSchema)
+
+const experienceModel = model("Experience", experienceSchema)
+module.exports = experienceModel

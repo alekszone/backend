@@ -15,8 +15,7 @@ user:[{
   type:Schema.Types.ObjectId , ref:"profiles"
 }],
 image:{
-    type:String,
-    
+    type:String,    
 },
  },
 {

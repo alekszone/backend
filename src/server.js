@@ -27,7 +27,7 @@ server.use(cors())
 
 server.use("/posts", posts)
 server.use("/profiles", profileRouter)
-server.use("/experiences", experienceRouter)
+// server.use("/experiences", experienceRouter)
 
 server.use(notFoundHandler)
 server.use(badRequestHandler)
