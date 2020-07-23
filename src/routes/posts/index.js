@@ -6,7 +6,7 @@ const multer = require("multer")
 const upload = multer()
 const q2m  = require("query-to-mongo")
 const posts= express.Router()
-const imagePath = path.join(__dirname,"../../../post/image")
+const imagePath = path.join(__dirname,"../../../public/image/post")
 
 
 posts.get("/", async(req,res,next)=>{
@@ -40,23 +40,6 @@ res.send( "Added" )
 next(err)
 }
 })
-posts.post("/:postId/image" , upload.single('image'),async(req,res,next)=>{
-try{
-await fs.writeFile(path.join(imagePath, `${req.params.postId}.jpg`),req.file.buffer)
-
-req.body={ image : `https://linkedin-team.herokuapp.com/image/post/${req.params.postId}.jpg`}
-console.log(req.body)
-const image = await mongo.findByIdAndUpdate({'_id':req.params.postId}, req.body)
-console.log(image)
-if(image){
-    res.send("Image Added")
-}else{
-    res.send("Not exist")
-}
-}catch(err){
-    next(err)
-}
-})
 
 
 
@@ -81,6 +64,24 @@ if(post){
     next(err)
 }
 })
+posts.post("/:postId/image" , upload.single('image'),async(req,res,next)=>{
+    try{
+    await fs.writeFile(path.join(imagePath, `${req.params.postId}.jpg`),req.file.buffer)
+    
+    req.body={ image : `https://linkedin-team.herokuapp.com/public/image/post/${req.params.postId}.jpg`}
+    console.log(req.body)
+    const image = await mongo.findByIdAndUpdate({'_id':req.params.postId}, req.body)
+    console.log(image)
+    if(image){
+        res.send("Image Added")
+    }else{
+        res.send("Not exist")
+    }
+    }catch(err){
+        next(err)
+    }
+    })
+    
 
 
 module.exports = posts
