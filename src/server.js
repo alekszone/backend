@@ -23,7 +23,7 @@ const {
 server.use(express.static(staticFolderPath))
 server.use(express.json())
 
-
+server.use(cors())
 
 server.use("/posts", posts)
 server.use("/profiles", profileRouter)
@@ -34,29 +34,6 @@ server.use(badRequestHandler)
 server.use(newlyDefinedErrorHandler)
 server.use(otherGenericErrorHandler)
 
-
-const whitelist =  process.env.NODE_ENV === "production"
- 
-   ?
- [process.env.FEURL]
-  :
-  [process.env.FE_URL]
- 
-  
-
-
-const corsOptions = {
-  origin: function (origin, callback) 
-{
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
-    } 
-else {
-      callback(new Error("Not allowed by CORS"))
-    }
-  },
-}
-server.use(cors(corsOptions))
 console.log(listEndpoints(server))
 mongoose.connect("mongodb+srv://eriseld:troy1894@cluster0.j7g0j.mongodb.net/linkedindb", {
     useNewUrlParser: true,
