@@ -168,8 +168,8 @@ profileRouter.delete("/:username/experiences/:expId", async (req, res, next) => 
 profileRouter.post("/:username/experiences/:expId/picture", upload.single('image'), async (req, res, next) => {
   try {
     const id = req.params.expId
-    await fs.writeFile(path.join(imagePathExp, `${id}.jpg`), req.file.buffer)
-    req.body = { image: `https://linkedin-team.herokuapp.com/image/experiences/${id}.jpg` }
+    await fs.writeFile(path.join(imagePathExp, `${id}`), req.file.buffer)
+    req.body = { image: `https://linkedin-team.herokuapp.com/image/experiences/${id}` }
     const image = await experienceModel.findByIdAndUpdate(id, req.body)
     if (image) {
       res.send("Image Added")
