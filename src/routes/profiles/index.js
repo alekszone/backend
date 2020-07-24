@@ -183,6 +183,48 @@ profileRouter.put('/:username', async (req, res, next) => {
   }
 })
 
+profileRouter.get('/:username/cv', async (req, res, next) => {
+  try {
+    const user = await ProfileModel.findOne({ 'username': req.params.username })
+    if (user) {
+      console.log(user)
+      var fonts = {
+        Roboto: {
+          normal: 'node_modules/roboto-font/fonts/Roboto/roboto-regular-webfont.ttf',
+          bold: 'node_modules/roboto-font/fonts/Roboto/roboto-bold-webfont.ttf',
+          italics: 'node_modules/roboto-font/fonts/Roboto/roboto-italic-webfont.ttf',
+          bolditalics: 'node_modules/roboto-font/fonts/Roboto/roboto-bolditalic-webfont.ttf'
+        }
+      };
+      var printer = new PdfPrinter(fonts);
+      var docDefinition = {
+        pageMargins: [150, 50, 150, 50],
+        content: [
+          { text: `${user.username}`, fontSize: 25, background: 'yellow', italics: true },
+          {
+            image: `${path.join(imagePath, `${req.params.username}.jpg`)}`,
+            width: 150
+          },
+          // "                                                                         ",
+          // `             Name: ${user.name}`,
+          // `             Surname: ${user.surname}`,
+          // `             Email: ${user.email}`,
+          // `             Bio: ${user.bio} $`,
+          // `             Title: ${user.title}`,
+          // `             Area: ${user.area}`,
+        ]
+      }
+      var pdfDoc = printer.createPdfKitDocument(docDefinition);
+      res.setHeader("Content-Disposition", `attachment; filename=${user.username}.pdf`)
+      res.contentType("application/pdf")
+      pdfDoc.pipe(res)
+      pdfDoc.end()
+    }
+    else res.status(404).send('not found!')
+  } catch (error) {
+    next(error)
+  }
+})
 
 profileRouter.delete('/:username', async (req, res, next) => {
   try {
@@ -220,49 +262,5 @@ profileRouter.post('/:username/picture', upload.single('userImage'), async (req,
   }
 })
 
-profileRouter.get('/:username/cv', async (req, res, next) => {
-
-  try {
-    const user = await ProfileModel.findOne({ 'username': req.params.username })
-    if (user) {
-      var fonts = {
-        Roboto: {
-          normal: 'node_modules/roboto-font/fonts/Roboto/roboto-regular-webfont.ttf',
-          bold: 'node_modules/roboto-font/fonts/Roboto/roboto-bold-webfont.ttf',
-          italics: 'node_modules/roboto-font/fonts/Roboto/roboto-italic-webfont.ttf',
-          bolditalics: 'node_modules/roboto-font/fonts/Roboto/roboto-bolditalic-webfont.ttf'
-        }
-      };
-      var printer = new PdfPrinter(fonts);
-      var docDefinition = {
-        pageMargins: [150, 50, 150, 50],
-        content: [
-          { text: `${user.username}`, fontSize: 25, background: 'yellow', italics: true },
-          {
-            image: `${path.join(imagePath, `${req.params.username}.jpg`)}`,
-            width: 150
-          },
-          "                                                                         ",
-          `             Name: ${user.name}`,
-          `             Surname: ${user.surname}`,
-          `             Email: ${user.email}`,
-          `             Bio: ${user.bio} $`,
-          `             Title: ${user.title}`,
-          `             Area: ${user.area}`,
-        ]
-      }
-
-      var pdfDoc = printer.createPdfKitDocument(docDefinition);
-      res.setHeader("Content-Disposition", `attachment; filename=${user.name}.pdf`)
-      res.contentType("application/pdf")
-      pdfDoc.pipe(res)
-      pdfDoc.end()
-    }
-    else res.status(404).send('not found!')
-
-  } catch (error) {
-    next(error)
-  }
-})
 
 module.exports = profileRouter
