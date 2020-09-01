@@ -31,5 +31,5 @@ jobs:
       with:
         app-name: 'helllooo'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_89b7ea7f04ac4bc8ad8e8f08128e5db9 }}
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_a4f319ccb5c947398e9bc63b6a69e184 }}
         package: .
